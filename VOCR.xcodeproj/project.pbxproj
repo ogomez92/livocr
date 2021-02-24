@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		165705CC25E63DAD00005C3B /* settingsShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165705CB25E63DAD00005C3B /* settingsShortcuts.swift */; };
 		16FD4A7E25B9E02300FA5273 /* liveMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FD4A7D25B9E02300FA5273 /* liveMode.swift */; };
 		16FD4A8125B9F57400FA5273 /* utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FD4A8025B9F57400FA5273 /* utils.swift */; };
 		16FD4A8425B9F58400FA5273 /* soundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FD4A8325B9F58400FA5273 /* soundManager.swift */; };
@@ -40,6 +41,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		165705CB25E63DAD00005C3B /* settingsShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = settingsShortcuts.swift; sourceTree = "<group>"; };
 		16FD4A7D25B9E02300FA5273 /* liveMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = liveMode.swift; sourceTree = "<group>"; };
 		16FD4A8025B9F57400FA5273 /* utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = utils.swift; path = ../../../../../../Users/uri/code/iosgames/utilities/utils.swift; sourceTree = "<group>"; };
 		16FD4A8325B9F58400FA5273 /* soundManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = soundManager.swift; path = ../../../../../../Users/uri/code/iosgames/utilities/soundManager.swift; sourceTree = "<group>"; };
@@ -254,6 +256,7 @@
 				EADE59BA232EB09A00E2F65A /* Main.storyboard */,
 				EA5C7ACB2351BB6D00D84042 /* Navigation.swift */,
 				EAA12C4E234C89030036AF6A /* NavigationShortcuts.swift */,
+				165705CB25E63DAD00005C3B /* settingsShortcuts.swift */,
 				EA2DA1AE232EB22300D31031 /* NSRunningApplication Extension.swift */,
 				EA5C7AC72351B3F500D84042 /* OCR.swift */,
 				16FD4A7D25B9E02300FA5273 /* liveMode.swift */,
@@ -374,6 +377,7 @@
 				EA2DA1A9232EB18800D31031 /* HotKey.swift in Sources */,
 				16FD4A8125B9F57400FA5273 /* utils.swift in Sources */,
 				EAF9C3C82354A66200D4D77C /* Settings.swift in Sources */,
+				165705CC25E63DAD00005C3B /* settingsShortcuts.swift in Sources */,
 				EA1F642C2352503D0089C967 /* Player.swift in Sources */,
 				EAA12C4F234C89030036AF6A /* NavigationShortcuts.swift in Sources */,
 			);

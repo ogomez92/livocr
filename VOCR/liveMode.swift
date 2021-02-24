@@ -9,7 +9,17 @@
 import Foundation
 
 var liveMode=false
+func setupLive() {
+	if liveMode {
+		settingsShortcuts=SettingsShortcuts()
+	}
+	else {
+		settingsShortcuts=nil
+	}
+}
+var settingsShortcuts: SettingsShortcuts?
 class Live {
+
 	var recognizedLines: [String]=[]
 	var timer: Timer?
 	init() {

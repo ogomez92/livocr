@@ -11,7 +11,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	
 	func applicationDidFinishLaunching(_ notification: Notification) {
 		let so = SoundManager()
-		_=so.playOnce("sounds/startup")
+		//_=so.playOnce("sounds/startup")
 		Accessibility.speak("Welcome to LIVOCR")
 		live.start()
 		let menu = NSMenu()

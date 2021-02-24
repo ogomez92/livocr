@@ -11,7 +11,7 @@ import Vision
 import Cocoa
 
 class Navigation {
-
+	
 	static let shared = Navigation()
 	var displayResults:[[VNRecognizedTextObservation]] = []
 	var navigationShortcuts:NavigationShortcuts?
@@ -20,8 +20,9 @@ class Navigation {
 	var l = -1
 	var w = -1
 	var c = -1
-
+	let ring=Ring()
 	func startOCR(cgImage:CGImage) {
+		var image=cgImage
 		if Settings.positionReset {
 			l = -1
 			w = -1
@@ -30,20 +31,31 @@ class Navigation {
 		displayResults = []
 		navigationShortcuts = nil
 		//NSSound(contentsOfFile: "/System/Library/Sounds/Pop.aiff", byReference: true)?.play()
-		var result = performOCR(cgImage:cgImage)
+		if liveMode {
+			let height = cgImage.height
+			let width = cgImage.width
+			let up=width*liveSettings[0]/100
+			let down=width*liveSettings[1]/100
+			let right = height*liveSettings[2]/100
+			let left = height*liveSettings[3]/100
+			let rect=CGRect(x: left, y: up, width: width-right, height: height-down)
+			print(rect)
+			image=image.cropping(to: rect)!
+		}
+		var result = performOCR(cgImage:image)
 		if result.count == 0 {
 			if !liveMode {
-			Accessibility.speak("Nothing found")
+				Accessibility.speak("Nothing found")
 			}
 			return
 		}
 		process(result:&result)
 		if !liveMode {
-		Accessibility.speak("Finished!")
+			Accessibility.speak("Finished!")
 		}
 		navigationShortcuts = NavigationShortcuts()
 	}
-
+	
 	func process(result:inout[VNRecognizedTextObservation]) {
 		result = result.sorted(by: sort)
 		var line:[VNRecognizedTextObservation] = []
@@ -58,7 +70,7 @@ class Navigation {
 			}
 			line.append(r)
 			if liveMode {
-
+				
 				lines.append(r.topCandidates(1)[0].string)
 			}
 		}
@@ -81,41 +93,41 @@ class Navigation {
 			live.recognizedLines=lines
 		}
 	}
-
+	
 	func convert2coordinates(_ box:CGRect) -> CGPoint {
-			var center = CGPoint(x:box.midX, y:box.midY)
+		var center = CGPoint(x:box.midX, y:box.midY)
 		if Settings.positionalAudio {
 			let frequency = 100+1000*Float(center.y)
 			let pan = Float(Double(center.x).normalize(from: 0...1, into: -1...1))
 			Player.shared.play(frequency, pan)
 		}
-			center = VNImagePointForNormalizedPoint(center, Int(cgSize.width), Int(cgSize.height))
+		center = VNImagePointForNormalizedPoint(center, Int(cgSize.width), Int(cgSize.height))
 		center.y = cgSize.height-center.y
 		center.x += cgPosition.x
 		center.y += cgPosition.y
 		return center
 	}
-
+	
 	func sort(_ a:VNRecognizedTextObservation, _ b:VNRecognizedTextObservation) -> Bool {
 		if a.boundingBox.midY-b.boundingBox.midY>0.01 {
 			return true
 		} else if b.boundingBox.midY-a.boundingBox.midY>0.01 {
 			return false
 		}
-		 if a.boundingBox.midX<b.boundingBox.midX {
-			 return true
+		if a.boundingBox.midX<b.boundingBox.midX {
+			return true
 		} else {
 			return false
 		}
 	}
-
+	
 	func location() {
 		var center = convert2coordinates(displayResults[l][w].boundingBox)
 		center.x -= cgPosition.x
 		center.y -= cgPosition.y
 		Accessibility.speak("\(Int(center.x)), \(Int(center.y))")
 	}
-
+	
 	func correctLimit() {
 		if l < 0 {
 			l = 0
@@ -128,7 +140,7 @@ class Navigation {
 			w = displayResults[l].count-1
 		}
 	}
-
+	
 	func right() {
 		if displayResults.count == 0 {
 			return
@@ -152,13 +164,13 @@ class Navigation {
 		CGDisplayMoveCursorToPoint(0, convert2coordinates(displayResults[l][w].boundingBox))
 		Accessibility.speak(displayResults[l][w].topCandidates(1)[0].string)
 	}
-
+	
 	func down() {
 		if displayResults.count == 0 {
 			return
 		}
 		l += 1
-			w = 0
+		w = 0
 		c = -1
 		correctLimit()
 		print("\(l), \(w)")
@@ -169,13 +181,13 @@ class Navigation {
 		}
 		Accessibility.speak(line)
 	}
-
+	
 	func up() {
 		if displayResults.count == 0 {
 			return
 		}
 		l -= 1
-			w = 0
+		w = 0
 		c = -1
 		correctLimit()
 		print("\(l), \(w)")
@@ -186,7 +198,7 @@ class Navigation {
 		}
 		Accessibility.speak(line)
 	}
-
+	
 	func top() {
 		if displayResults.count == 0 {
 			return
@@ -195,7 +207,7 @@ class Navigation {
 		w = 0
 		up()
 	}
-
+	
 	func bottom() {
 		if displayResults.count == 0 {
 			return
@@ -204,7 +216,7 @@ class Navigation {
 		w = 0
 		down()
 	}
-
+	
 	func beginning() {
 		if displayResults.count == 0 {
 			return
@@ -220,7 +232,7 @@ class Navigation {
 		w = displayResults[l].count-2
 		right()
 	}
-
+	
 	func nextCharacter() {
 		if displayResults.count == 0 {
 			return
@@ -241,21 +253,21 @@ class Navigation {
 			var box:CGRect
 			try box = candidate.boundingBox(for: range)!.boundingBox
 			CGDisplayMoveCursorToPoint(0, convert2coordinates(box))
-
-/*
-			str = String(character)
-			let u = str.unicodeScalars
-			let uName = u[u.startIndex].properties.name!
-			if !uName.contains("LETTER") {
+			
+			/*
+				str = String(character)
+				let u = str.unicodeScalars
+				let uName = u[u.startIndex].properties.name!
+				if !uName.contains("LETTER") {
 				str = uName
-			}
-*/
-
+				}
+				*/
+			
 			Accessibility.speak(str)
 		} catch {
 		}
 	}
-
+	
 	func previousCharacter() {
 		if displayResults.count == 0 {
 			return
@@ -277,31 +289,31 @@ class Navigation {
 			var box:CGRect
 			try box = candidate.boundingBox(for: range)!.boundingBox
 			CGDisplayMoveCursorToPoint(0, convert2coordinates(box))
-
+			
 			/*
-			str = String(character).description
-			let u = str.unicodeScalars
-			let uName = u[u.startIndex].properties.name!
-			if !uName.contains("LETTER") {
+				str = String(character).description
+				let u = str.unicodeScalars
+				let uName = u[u.startIndex].properties.name!
+				if !uName.contains("LETTER") {
 				str = uName
-			}
-*/
+				}
+				*/
 			Accessibility.speak(str)
 		} catch {
 		}
-
+		
 	}
-
+	
 	func text() -> String {
-var text = ""
+		var text = ""
 		for line in displayResults {
 			for word in line {
 				text += word.topCandidates(1)[0].string+" "
 			}
 			text = text.dropLast()+"\n"
 		}
-return text
+		return text
 	}
-
+	
 }
 

@@ -9,7 +9,7 @@
 import Cocoa
 
 struct Shortcuts {
-	
+	var settingsRingShortcuts: SettingsShortcuts?
 	let window = HotKey(key:.w, modifiers:[.command,.control,.shift])
 	let liveKey = HotKey(key:.l, modifiers:[.command,.control,.shift])
 	let vo = HotKey(key:.v, modifiers:[.command,.shift, .control])
@@ -23,10 +23,12 @@ struct Shortcuts {
 				return
 			}
 			liveMode.toggle()
+			setupLive()
 			live.recognizedLines=[]
-			
+
 			if liveMode {
 				Accessibility.speak("LIVOCR on")
+				
 							}
 			if !liveMode {
 				Accessibility.speak("LIVOCR off")
@@ -37,6 +39,7 @@ struct Shortcuts {
 
 		window.keyDownHandler = {
 			liveMode=false
+			setupLive()
 			if !Accessibility.isTrusted(ask:true) {
 				print("Accessibility not enabled.")
 				return
@@ -49,6 +52,7 @@ struct Shortcuts {
 		
 		vo.keyDownHandler = {
 			liveMode=false
+			setupLive()
 			recognizeVOCursor()
 		}
 		
@@ -66,6 +70,7 @@ struct Shortcuts {
 		
 		positionalAudio.keyDownHandler = {
 			liveMode=false
+			setupLive()
 			if Settings.positionalAudio {
 				Settings.positionalAudio = false
 				Accessibility.speak("Disable positional audio.")
